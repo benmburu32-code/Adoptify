@@ -9,6 +9,7 @@ import RegisterPage from './pages/RegisterPage.jsx'
 import AddPetPage from './pages/AddPetPage.jsx'
 import DashboardPage from './pages/DashboardPage.jsx'
 import NotFoundPage from './pages/NotFoundPage.jsx'
+import ProtectedRoute from './components/ProtectedRoute.jsx'
 
 function App() {
   return (
@@ -21,8 +22,10 @@ function App() {
           <Route path="/pets/:id" element={<PetDetailPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
-          <Route path="/add-pet" element={<AddPetPage />} />
-          <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/add-pet" element={
+          <ProtectedRoute><AddPetPage /></ProtectedRoute>} />
+          <Route path="/dashboard" element={
+          <ProtectedRoute><DashboardPage /></ProtectedRoute>} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </main>
