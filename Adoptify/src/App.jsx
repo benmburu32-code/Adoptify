@@ -1,12 +1,34 @@
+import { Routes, Route } from 'react-router-dom'
+import Navbar from './components/Navbar.jsx'
+import Footer from './components/Footer.jsx'
+import HomePage from './pages/HomePage.jsx'
+import PetsPage from './pages/PetsPage.jsx'
+import PetDetailPage from './pages/PetDetailPage.jsx'
+import LoginPage from './pages/LoginPage.jsx'
+import RegisterPage from './pages/RegisterPage.jsx'
+import AddPetPage from './pages/AddPetPage.jsx'
+import DashboardPage from './pages/DashboardPage.jsx'
+import NotFoundPage from './pages/NotFoundPage.jsx'
+
 function App() {
   return (
-    <div className="min-h-screen bg-stone-100 flex items-center justify-center">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold text-teal-700">Adoptify 🐾</h1>
-        <p className="mt-2 text-lg text-stone-600">Find your new best friend.</p>
-      </div>
+    <div className="min-h-screen flex flex-col bg-stone-100">
+      <Navbar />
+      <main className="flex-1">
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/pets" element={<PetsPage />} />
+          <Route path="/pets/:id" element={<PetDetailPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/add-pet" element={<AddPetPage />} />
+          <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+      </main>
+      <Footer />
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
