@@ -10,6 +10,7 @@ import AddPetPage from './pages/AddPetPage.jsx'
 import DashboardPage from './pages/DashboardPage.jsx'
 import NotFoundPage from './pages/NotFoundPage.jsx'
 import ProtectedRoute from './components/ProtectedRoute.jsx'
+import EditPetPage from './pages/EditPetPage.jsx'
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
           <Route path="/dashboard" element={
           <ProtectedRoute><DashboardPage /></ProtectedRoute>} />
           <Route path="*" element={<NotFoundPage />} />
+          <Route path="/pets/:id/edit" element={<ProtectedRoute><EditPetPage /></ProtectedRoute>} />
         </Routes>
       </main>
       <Footer />

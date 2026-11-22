@@ -1,8 +1,80 @@
+import { Link, useNavigate, useParams } from 'react-router-dom'
+import { deleteDoc, doc } from 'firebase/firestore'
+import { db } from '../firebase.js'
+import { useAuth } from '../context/AuthContext.jsx'
+import { usePet } from "../hooks/usePet.js";
+import Spinner from '../components/Spinner.jsx'
+
 function PetDetailPage() {
+  const { id } = useParams()
+  const { user } = useAuth()
+  const navigate = useNavigate()
+  const { pet, notFound, loading } = usePet(id)
+  const isOwner = Boolean(user && pet && user.uid === pet.ownerId)
+
+  async function handleDelete() {
+    const confirmed = window.confirm(`Really remove ${pet.name} from Adoptify?`)
+    if (!confirmed) return
+    await deleteDoc(doc(db, 'pets', id))
+    navigate('/pets')
+  }
+
+  if (loading) {
+    return <div className="max-w-6xl mx-auto px-4 py-24"><Spinner /></div>
+  }
+  if (notFound) {
+    return (
+      <div className="max-w-6xl mx-auto px-4 py-24 text-center">
+        <h1 className="text-3xl font-bold text-stone-800">Pet not found</h1>
+        <p className="mt-2 text-stone-600">It may have already found a home. <Link to="/pets" className="text-teal-700 underline">See who's still waiting</Link></p>
+      </div>
+    )
+  }
+
   return (
     <div className="max-w-6xl mx-auto px-4 py-12">
-      <h1 className="text-3xl font-bold text-stone-800">Pet detail</h1>
-      <p className="mt-2 text-stone-600">This page will load one pet by its id.</p>
+      <Link to="/pets" className="text-sm text-teal-700 underline">← Back to all pets</Link>
+      <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+        <img
+          src={pet.photo || `https://placehold.co/800x600/f0fdfa/0f766e?text=${pet.name}`}
+          alt={`Photo of ${pet.name}`}
+          className="w-full rounded-2xl object-cover max-h-[480px]"
+        />
+        <div>
+          <h1 className="text-4xl font-bold text-stone-800">{pet.name}</h1>
+          <p className="mt-2 text-stone-500">
+            {pet.breed} · {pet.age} {pet.age === 1 ? 'year' : 'years'} old
+          </p>
+          <p className="mt-6 text-stone-700 leading-relaxed">{pet.description}</p>
+
+          {isOwner ? (
+            <div className="mt-8 flex gap-3">
+              <Link
+                to={`/pets/${pet.id}/edit`}
+                className="bg-teal-600 hover:bg-teal-700 text-white font-semibold px-6 py-2.5 rounded-lg"
+              >
+                Edit listing
+              </Link>
+              <button
+                onClick={handleDelete}
+                className="border border-red-300 text-red-600 hover:bg-red-50 font-semibold px-6 py-2.5 rounded-lg"
+              >
+                Delete
+              </button>
+            </div>
+          ) : user ? (
+            <p className="mt-8 text-sm text-stone-500">Adoption applications arrive in the next step. 🐾</p>
+          ) : (
+            <Link
+              to="/login"
+              state={{ from: { pathname: `/pets/${pet.id}` } }}
+              className="mt-8 inline-block bg-orange-500 hover:bg-orange-600 text-white font-semibold px-6 py-2.5 rounded-lg"
+            >
+              Log in to apply for adoption
+            </Link>
+          )}
+        </div>
+      </div>
     </div>
   )
 }
